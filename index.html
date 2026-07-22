@@ -199,8 +199,8 @@
     <button class="nav-btn active" data-section="market">🛒 Куплю/Продам</button>
     <button class="nav-btn" data-section="services">🔧 Услуги</button>
     <button class="nav-btn" data-section="kind">💝 Добрые дела</button>
-    <button class="nav-btn" data-section="events">🎉 События</button>
-    <button class="nav-btn" data-section="rides">🚗 Еду в город</button>
+    <button class="nav-btn" data-section="events"> События</button>
+    <button class="nav-btn" data-section="rides"> Еду в город</button>
 </nav>
 
 <main>
@@ -248,12 +248,13 @@
             <button class="btn btn-accent" onclick="openPostModal('ride')">+ Предложить место</button>
         </div>
         <div class="form-hint warning" style="margin-bottom: 15px;">
-            ⏰ <strong>Важно:</strong> объявление автоматически удалится через 5 минут после указанного времени выезда.
+             <strong>Важно:</strong> объявление автоматически удалится через 5 минут после указанного времени выезда.
         </div>
         <div id="ridesCards" class="cards-grid"></div>
     </section>
 </main>
 
+<!-- Модалки (те же самые что и раньше) -->
 <div id="loginModal" class="modal-overlay">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('loginModal')">×</button>
@@ -364,7 +365,7 @@
 <div id="adminModal" class="modal-overlay">
     <div class="modal" style="max-width: 500px;">
         <button class="modal-close" onclick="closeModal('adminModal')">×</button>
-        <h2>⚙️ Панель управления</h2>
+        <h2>️ Панель управления</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
             <div style="background: #f4f7f3; padding: 10px; border-radius: 6px; text-align: center;">
                 <div style="font-size: 20px; font-weight: bold; color: #4a7c3a;" id="statUsers">0</div>
@@ -376,10 +377,10 @@
             </div>
         </div>
         <div style="margin-top: 15px; border-top: 2px solid #eee; padding-top: 15px;">
-            <h3 style="margin-bottom: 12px; font-size: 14px; color: #2c3e2d;">⚙️ Управление разделами</h3>
+            <h3 style="margin-bottom: 12px; font-size: 14px; color: #2c3e2d;">️ Управление разделами</h3>
             <div class="admin-row">
                 <div>
-                    <div class="admin-row-label">🚗 Раздел "Еду в город"</div>
+                    <div class="admin-row-label"> Раздел "Еду в город"</div>
                     <div class="admin-row-desc">Показывать пользователям или скрыть в разработку</div>
                 </div>
                 <label class="switch">
@@ -410,7 +411,6 @@ import {
     onSnapshot, query, orderBy, getDocs, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ✅ ВАША КОНФИГУРАЦИЯ FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyCDo7ILmQuKcybUFhRDwwAX8xxnwO8evDg",
   authDomain: "snt-isabella.firebaseapp.com",
@@ -834,7 +834,7 @@ function renderRidesSection() {
         if (addBtn) addBtn.style.display = 'inline-block';
         const items = state.posts.filter(p => p.type === 'ride');
         if (items.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Пока нет предложений о поездках</p></div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon"></div><p>Пока нет предложений о поездках</p></div>';
         } else {
             container.innerHTML = items.map(p => renderCard(p)).join('');
         }
@@ -863,7 +863,7 @@ function renderCard(p) {
     const isOwner = state.currentUser && (state.currentUser.isAdmin || p.authorPhone === state.currentUser.phone);
     const actions = isOwner ? `
         <div class="card-actions">
-            <button class="btn btn-primary btn-small" onclick="editPost('${p.id}')">✏️</button>
+            <button class="btn btn-primary btn-small" onclick="editPost('${p.id}')">️</button>
             <button class="btn btn-danger btn-small" onclick="deletePost('${p.id}')">🗑️</button>
         </div>` : '';
     const timeInfo = p.type === 'ride' && p.departureTimeStr ? `<div class="card-time">🚗 Выезд: ${p.departureTimeStr}</div>` : '';
@@ -877,7 +877,7 @@ function renderCard(p) {
             <div class="card-body">${escapeHtml(p.description)}</div>
             ${timeInfo}
             <div class="card-footer">
-                <span class="card-author">👤 ${escapeHtml(authorLine)}</span>
+                <span class="card-author"> ${escapeHtml(authorLine)}</span>
                 ${priceBlock}
             </div>
             <div style="margin-top:8px;font-size:12px;">📞 ${escapeHtml(p.contact)}</div>
@@ -960,7 +960,6 @@ async function deleteUser(phone) {
     }
 }
 
-// Делаем функции глобальными для HTML onclick
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.switchModal = switchModal;
@@ -979,7 +978,6 @@ window.toggleCustomRideTime = toggleCustomRideTime;
 window.toggleRidesSection = toggleRidesSection;
 window.toggleMaintenanceMode = toggleMaintenanceMode;
 
-// PWA
 let deferredPrompt;
 const installBtn = document.getElementById('installPwaBtn');
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -1003,7 +1001,7 @@ window.addEventListener('appinstalled', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('sw.js')
             .then(reg => console.log('SW зарегистрирован:', reg))
             .catch(err => console.log('SW не зарегистрирован:', err));
     });
