@@ -73,7 +73,7 @@
         .card-time { font-size: 12px; color: #e67e22; font-weight: 700; margin-top: 6px; background: #fff3e0; display: inline-block; padding: 3px 8px; border-radius: 6px; }
         .card-actions { display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
         .card-actions .btn { flex: 1; }
-        .card-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: 6px; margin: 8px 0; }
+        .card-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: 6px; margin: 8px 0; cursor: pointer; }
         .card-image.small { max-height: 150px; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
         .modal-overlay.active { display: flex; }
@@ -178,16 +178,16 @@
     <div class="header-top">
         <div class="header-left">
             <div class="logo-block">
-                <span class="logo-icon">🏡</span>
+                <span class="logo-icon"></span>
                 <span class="logo-text">СНТ Изабелла</span>
             </div>
-            <button id="installPwaBtn" class="hidden" onclick="installPWA()"> Установить</button>
+            <button id="installPwaBtn" class="hidden" onclick="installPWA()">📲 Установить</button>
             <div id="authButtons" class="auth-buttons">
                 <button class="btn btn-secondary" onclick="openModal('loginModal')">Войти</button>
                 <button class="btn btn-primary" onclick="openModal('registerModal')">Регистрация</button>
             </div>
             <div id="userInfo" class="user-info hidden">
-                <span id="ownerBadge" class="owner-badge hidden">👑</span>
+                <span id="ownerBadge" class="owner-badge hidden"></span>
                 <span id="currentUserDisplay"></span>
                 <button id="adminPanelBtn" class="btn btn-admin btn-small hidden" onclick="openAdminPanel()">⚙️</button>
                 <button class="btn btn-secondary" onclick="logout()">Выйти</button>
@@ -203,7 +203,7 @@
 
 <nav>
     <button class="nav-btn active" data-section="market">🛒 Куплю/Продам</button>
-    <button class="nav-btn" data-section="services"> Услуги</button>
+    <button class="nav-btn" data-section="services">🔧 Услуги</button>
     <button class="nav-btn" data-section="kind">💝 Добрые дела</button>
     <button class="nav-btn" data-section="events">🎉 События</button>
     <button class="nav-btn" data-section="rides">🚗 Еду в город</button>
@@ -218,9 +218,9 @@
         </div>
         <div class="filter-bar" id="marketFilterBar">
             <button class="filter-btn active" data-filter="all" onclick="setMarketFilter('all')">Все <span class="count" id="countAll">0</span></button>
-            <button class="filter-btn" data-filter="buy" onclick="setMarketFilter('buy')">🛍️ Куплю <span class="count" id="countBuy">0</span></button>
-            <button class="filter-btn" data-filter="sell" onclick="setMarketFilter('sell')">💰 Продам <span class="count" id="countSell">0</span></button>
-            <button class="filter-btn" data-filter="give" onclick="setMarketFilter('give')"> Отдам <span class="count" id="countGive">0</span></button>
+            <button class="filter-btn" data-filter="buy" onclick="setMarketFilter('buy')">️ Куплю <span class="count" id="countBuy">0</span></button>
+            <button class="filter-btn" data-filter="sell" onclick="setMarketFilter('sell')"> Продам <span class="count" id="countSell">0</span></button>
+            <button class="filter-btn" data-filter="give" onclick="setMarketFilter('give')">🎁 Отдам <span class="count" id="countGive">0</span></button>
         </div>
         <div id="marketCards" class="cards-grid"></div>
     </section>
@@ -255,7 +255,7 @@
             <button class="btn btn-accent" onclick="openPostModal('ride')">+ Предложить место</button>
         </div>
         <div class="form-hint warning" style="margin-bottom: 15px;">
-            ⏰ <strong>Важно:</strong> объявление автоматически удалится через 5 минут после указанного времени выезда.
+             <strong>Важно:</strong> объявление автоматически удалится через 5 минут после указанного времени выезда.
         </div>
         <div id="ridesCards" class="cards-grid"></div>
     </section>
@@ -265,7 +265,8 @@
             <h2 class="section-title">💬 Написать администратору</h2>
         </div>
         <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <div class="form-hint">📨 Ваше сообщение будет отправлено в Telegram администратору СНТ</div>
+            <div class="form-hint" style="margin-bottom: 8px;">📨 Ваше сообщение будет отправлено в Telegram администратору.</div>
+            <div class="form-hint warning">⚠️ <strong>Важно:</strong> Заявки отправляются в Telegram. Включите VPN для отправки.</div>
             <form onsubmit="sendToAdmin(event)">
                 <div class="form-group">
                     <label>Ваше имя <span class="required-mark">*</span></label>
@@ -286,12 +287,11 @@
     </section>
 </main>
 
-<!-- Модалки (те же что и раньше, только добавлено поле для фото) -->
 <div id="loginModal" class="modal-overlay">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('loginModal')">×</button>
         <h2>Вход</h2>
-        <div class="form-hint">💡 Телефон или номер участка</div>
+        <div class="form-hint"> Телефон или номер участка</div>
         <form onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label>Телефон или участок</label>
@@ -313,8 +313,8 @@
         <button class="modal-close" onclick="closeModal('registerModal')">×</button>
         <h2>Регистрация</h2>
         <div class="reg-method-switcher">
-            <button type="button" class="reg-method-btn active" data-method="phone" onclick="switchRegMethod('phone')"> Телефон</button>
-            <button type="button" class="reg-method-btn" data-method="plot" onclick="switchRegMethod('plot')"> Участок</button>
+            <button type="button" class="reg-method-btn active" data-method="phone" onclick="switchRegMethod('phone')">📱 Телефон</button>
+            <button type="button" class="reg-method-btn" data-method="plot" onclick="switchRegMethod('plot')">🏡 Участок</button>
         </div>
         <div id="hintPhone" class="form-hint">📱 Телефон для входа. Имя и участок — по желанию.</div>
         <div id="hintPlot" class="form-hint hidden">🏡 Участок и имя обязательны. Телефон — по желанию.</div>
@@ -363,7 +363,7 @@
                 <label>Описание</label>
                 <textarea id="postDescription" required></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="photoGroup">
                 <label>Фото (необязательно)</label>
                 <input type="file" id="postImage" accept="image/*" onchange="previewImage(this)">
                 <img id="imagePreview" class="image-preview">
@@ -415,10 +415,10 @@
             </div>
         </div>
         <div style="margin-top: 15px; border-top: 2px solid #eee; padding-top: 15px;">
-            <h3 style="margin-bottom: 12px; font-size: 14px; color: #2c3e2d;">️ Управление разделами</h3>
+            <h3 style="margin-bottom: 12px; font-size: 14px; color: #2c3e2d;">⚙️ Управление разделами</h3>
             <div class="admin-row">
                 <div>
-                    <div class="admin-row-label"> Раздел "Еду в город"</div>
+                    <div class="admin-row-label">🚗 Раздел "Еду в город"</div>
                     <div class="admin-row-desc">Показывать пользователям или скрыть в разработку</div>
                 </div>
                 <label class="switch">
@@ -436,9 +436,19 @@
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="admin-row">
+                <div>
+                    <div class="admin-row-label">📷 Загрузка фото</div>
+                    <div class="admin-row-desc">Разрешить или запретить загрузку фото к объявлениям</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="photoUploadToggle" onchange="togglePhotoUpload(this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
             <div class="admin-row" style="margin-top: 10px;">
                 <div>
-                    <div class="admin-row-label"> Telegram бот</div>
+                    <div class="admin-row-label">📱 Telegram бот</div>
                     <div class="admin-row-desc">Настройки для связи с админом</div>
                 </div>
                 <button class="btn btn-small btn-primary" onclick="openTelegramSettings()">Настроить</button>
@@ -500,7 +510,7 @@ const state = {
     currentUser: null,
     users: [],
     posts: [],
-    settings: { maintenanceMode: false, ridesEnabled: false, telegramToken: '', telegramChatId: '' },
+    settings: { maintenanceMode: false, ridesEnabled: false, telegramToken: '', telegramChatId: '', photoUploadEnabled: false },
     currentPostType: 'market',
     editingPostId: null,
     marketFilter: 'all',
@@ -516,14 +526,17 @@ const unsubSettings = onSnapshot(doc(db, 'settings', 'main'), (docSnap) => {
     if (docSnap.exists()) {
         state.settings = docSnap.data();
     } else {
-        setDoc(doc(db, 'settings', 'main'), { maintenanceMode: false, ridesEnabled: false, telegramToken: '', telegramChatId: '' });
+        setDoc(doc(db, 'settings', 'main'), { maintenanceMode: false, ridesEnabled: false, telegramToken: '', telegramChatId: '', photoUploadEnabled: false });
     }
     checkMaintenanceMode();
     renderRidesSection();
+    updatePhotoUploadUI();
     const ridesToggle = document.getElementById('ridesEnabledToggle');
     const maintToggle = document.getElementById('maintenanceToggle');
+    const photoToggle = document.getElementById('photoUploadToggle');
     if (ridesToggle) ridesToggle.checked = state.settings.ridesEnabled;
     if (maintToggle) maintToggle.checked = state.settings.maintenanceMode;
+    if (photoToggle) photoToggle.checked = state.settings.photoUploadEnabled;
 }, (error) => console.error('Ошибка настроек:', error));
 state.unsubscribers.push(unsubSettings);
 
@@ -593,6 +606,24 @@ async function toggleMaintenanceMode(isEnabled) {
     try {
         await setDoc(doc(db, 'settings', 'main'), { ...state.settings, maintenanceMode: isEnabled }, { merge: true });
     } catch (e) { alert('Ошибка: ' + e.message); }
+}
+
+async function togglePhotoUpload(isEnabled) {
+    try {
+        await setDoc(doc(db, 'settings', 'main'), { ...state.settings, photoUploadEnabled: isEnabled }, { merge: true });
+        alert(isEnabled ? '✅ Загрузка фото разрешена!' : '⚠️ Загрузка фото отключена');
+    } catch (e) { alert('Ошибка: ' + e.message); }
+}
+
+function updatePhotoUploadUI() {
+    const photoGroup = document.getElementById('photoGroup');
+    if (photoGroup) {
+        if (state.settings.photoUploadEnabled) {
+            photoGroup.classList.remove('hidden');
+        } else {
+            photoGroup.classList.add('hidden');
+        }
+    }
 }
 
 function toggleCustomRideTime() {
@@ -832,11 +863,22 @@ async function handlePost(e) {
     try {
         let imageUrl = '';
         
-        // Загрузка фото если есть
-        if (state.selectedImage) {
-            const storageRef = ref(storage, `posts/${Date.now()}_${state.selectedImage.name}`);
-            await uploadBytes(storageRef, state.selectedImage);
-            imageUrl = await getDownloadURL(storageRef);
+        // Загрузка фото только если разрешено в настройках
+        if (state.settings.photoUploadEnabled && state.selectedImage) {
+            try {
+                const fileExtension = state.selectedImage.name.split('.').pop().toLowerCase();
+                const safeFileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExtension}`;
+                const storageRef = ref(storage, `posts/${safeFileName}`);
+                
+                console.log('Загрузка фото:', safeFileName);
+                await uploadBytes(storageRef, state.selectedImage);
+                imageUrl = await getDownloadURL(storageRef);
+                console.log('Фото загружено:', imageUrl);
+            } catch (uploadError) {
+                console.error('Ошибка загрузки фото:', uploadError);
+                alert('⚠️ Не удалось загрузить фото. Объявление будет опубликовано без изображения.');
+                imageUrl = '';
+            }
         }
         
         const postData = {
@@ -879,6 +921,7 @@ async function handlePost(e) {
         e.target.reset();
         removeImage();
     } catch (e) {
+        console.error('Ошибка публикации:', e);
         alert('Ошибка сохранения: ' + e.message);
     } finally {
         submitBtn.disabled = false;
@@ -905,10 +948,10 @@ async function sendToAdmin(e) {
     
     try {
         const text = `📨 *Новое сообщение от пользователя СНТ*\n\n` +
-                    ` *Имя:* ${name}\n` +
+                    `👤 *Имя:* ${name}\n` +
                     `📱 *Телефон/Участок:* ${phone || 'Не указан'}\n` +
                     `💬 *Сообщение:*\n${message}\n\n` +
-                    ` *Время:* ${new Date().toLocaleString('ru-RU')}`;
+                    `⏰ *Время:* ${new Date().toLocaleString('ru-RU')}`;
         
         const response = await fetch(`https://api.telegram.org/bot${state.settings.telegramToken}/sendMessage`, {
             method: 'POST',
@@ -956,7 +999,7 @@ async function saveTelegramSettings(e) {
         alert('✅ Настройки Telegram сохранены!');
         closeModal('telegramSettingsModal');
     } catch (error) {
-        alert(' Ошибка сохранения: ' + error.message);
+        alert('❌ Ошибка сохранения: ' + error.message);
     }
 }
 
@@ -1027,7 +1070,7 @@ function renderRidesSection() {
         if (addBtn) addBtn.style.display = 'inline-block';
         const items = state.posts.filter(p => p.type === 'ride');
         if (items.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon"></div><p>Пока нет предложений о поездках</p></div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>Пока нет предложений о поездках</p></div>';
         } else {
             container.innerHTML = items.map(p => renderCard(p)).join('');
         }
@@ -1132,8 +1175,10 @@ function renderAdminPanelIfOpen(force = false) {
     
     const ridesToggle = document.getElementById('ridesEnabledToggle');
     const maintToggle = document.getElementById('maintenanceToggle');
+    const photoToggle = document.getElementById('photoUploadToggle');
     if (ridesToggle) ridesToggle.checked = state.settings.ridesEnabled;
     if (maintToggle) maintToggle.checked = state.settings.maintenanceMode;
+    if (photoToggle) photoToggle.checked = state.settings.photoUploadEnabled;
     
     tbody.innerHTML = state.users.map(u => `
         <div style="padding: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
@@ -1173,6 +1218,7 @@ window.deleteUser = deleteUser;
 window.toggleCustomRideTime = toggleCustomRideTime;
 window.toggleRidesSection = toggleRidesSection;
 window.toggleMaintenanceMode = toggleMaintenanceMode;
+window.togglePhotoUpload = togglePhotoUpload;
 window.openTelegramSettings = openTelegramSettings;
 window.saveTelegramSettings = saveTelegramSettings;
 window.sendToAdmin = sendToAdmin;
@@ -1214,4 +1260,3 @@ checkMaintenanceMode();
 
 </body>
 </html>
-
