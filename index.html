@@ -178,7 +178,7 @@
     <div class="header-top">
         <div class="header-left">
             <div class="logo-block">
-                <span class="logo-icon"></span>
+                <span class="logo-icon">🏡</span>
                 <span class="logo-text">СНТ Изабелла</span>
             </div>
             <button id="installPwaBtn" class="hidden" onclick="installPWA()">📲 Установить</button>
@@ -206,8 +206,8 @@
     <button class="nav-btn" data-section="services">🔧 Услуги</button>
     <button class="nav-btn" data-section="kind">💝 Добрые дела</button>
     <button class="nav-btn" data-section="events">🎉 События</button>
-    <button class="nav-btn" data-section="rides">🚗 Еду в город</button>
-    <button class="nav-btn" data-section="contact">💬 Написать админу</button>
+    <button class="nav-btn" data-section="rides"> Еду в город</button>
+    <button class="nav-btn" data-section="contact"> Написать админу</button>
 </nav>
 
 <main>
@@ -266,7 +266,7 @@
         </div>
         <div class="card" style="max-width: 600px; margin: 0 auto;">
             <div class="form-hint" style="margin-bottom: 8px;">📨 Ваше сообщение будет отправлено в Telegram администратору.</div>
-            <div class="form-hint warning">️ <strong>Важно:</strong> Заявки отправляются в Telegram. Включите VPN для отправки.</div>
+            <div class="form-hint warning">⚠️ <strong>Важно:</strong> Заявки отправляются в Telegram. Включите VPN для отправки.</div>
             <form onsubmit="sendToAdmin(event)">
                 <div class="form-group">
                     <label>Ваше имя <span class="required-mark">*</span></label>
@@ -287,6 +287,7 @@
     </section>
 </main>
 
+<!-- Модалки (те же что и раньше) -->
 <div id="loginModal" class="modal-overlay">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('loginModal')">×</button>
@@ -314,7 +315,7 @@
         <h2>Регистрация</h2>
         <div class="reg-method-switcher">
             <button type="button" class="reg-method-btn active" data-method="phone" onclick="switchRegMethod('phone')">📱 Телефон</button>
-            <button type="button" class="reg-method-btn" data-method="plot" onclick="switchRegMethod('plot')">🏡 Участок</button>
+            <button type="button" class="reg-method-btn" data-method="plot" onclick="switchRegMethod('plot')"> Участок</button>
         </div>
         <div id="hintPhone" class="form-hint">📱 Телефон для входа. Имя и участок — по желанию.</div>
         <div id="hintPlot" class="form-hint hidden">🏡 Участок и имя обязательны. Телефон — по желанию.</div>
@@ -415,10 +416,10 @@
             </div>
         </div>
         <div style="margin-top: 15px; border-top: 2px solid #eee; padding-top: 15px;">
-            <h3 style="margin-bottom: 12px; font-size: 14px; color: #2c3e2d;">️ Управление разделами</h3>
+            <h3 style="margin-bottom: 12px; font-size: 14px; color: #2c3e2d;">⚙️ Управление разделами</h3>
             <div class="admin-row">
                 <div>
-                    <div class="admin-row-label"> Раздел "Еду в город"</div>
+                    <div class="admin-row-label">🚗 Раздел "Еду в город"</div>
                     <div class="admin-row-desc">Показывать пользователям или скрыть в разработку</div>
                 </div>
                 <label class="switch">
@@ -428,7 +429,7 @@
             </div>
             <div class="admin-row">
                 <div>
-                    <div class="admin-row-label">📷 Загрузка фото</div>
+                    <div class="admin-row-label"> Загрузка фото</div>
                     <div class="admin-row-desc">Разрешить или запретить загрузку фото к объявлениям</div>
                 </div>
                 <label class="switch">
@@ -937,7 +938,7 @@ async function sendToAdmin(e) {
     const submitBtn = document.getElementById('contactSubmitBtn');
     
     if (!state.settings.telegramToken || !state.settings.telegramChatId) {
-        errorDiv.textContent = '⚠️ Telegram бот не настроен. Обратитесь к администратору.';
+        errorDiv.textContent = '️ Telegram бот не настроен. Обратитесь к администратору.';
         errorDiv.style.display = 'block';
         return;
     }
@@ -948,7 +949,7 @@ async function sendToAdmin(e) {
     try {
         const text = `📨 *Новое сообщение от пользователя СНТ*\n\n` +
                     `👤 *Имя:* ${name}\n` +
-                    ` *Телефон/Участок:* ${phone || 'Не указан'}\n` +
+                    `📱 *Телефон/Участок:* ${phone || 'Не указан'}\n` +
                     `💬 *Сообщение:*\n${message}\n\n` +
                     `⏰ *Время:* ${new Date().toLocaleString('ru-RU')}`;
         
@@ -1056,7 +1057,7 @@ function renderRidesSection() {
     const navBtn = document.querySelector('.nav-btn[data-section="rides"]');
     
     if (!state.settings.ridesEnabled) {
-        if (navBtn) navBtn.innerHTML = '️ Еду в город';
+        if (navBtn) navBtn.innerHTML = '🛠️ Еду в город';
         if (addBtn) addBtn.style.display = 'none';
         container.innerHTML = `
             <div class="empty-state" style="padding: 40px 15px;">
