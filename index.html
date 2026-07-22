@@ -73,6 +73,8 @@
         .card-time { font-size: 12px; color: #e67e22; font-weight: 700; margin-top: 6px; background: #fff3e0; display: inline-block; padding: 3px 8px; border-radius: 6px; }
         .card-actions { display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
         .card-actions .btn { flex: 1; }
+        .card-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: 6px; margin: 8px 0; }
+        .card-image.small { max-height: 150px; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 15px; }
         .modal-overlay.active { display: flex; }
         .modal { background: white; border-radius: 10px; padding: 20px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; position: relative; }
@@ -135,6 +137,10 @@
             pointer-events: none;
         }
         .sync-indicator.show { opacity: 1; }
+
+        .image-preview { max-width: 100%; max-height: 200px; border-radius: 6px; margin-top: 8px; display: none; }
+        .image-preview.show { display: block; }
+        .remove-image { background: #e74c3c; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-top: 4px; }
         
         @media (min-width: 600px) {
             .cards-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
@@ -175,7 +181,7 @@
                 <span class="logo-icon">🏡</span>
                 <span class="logo-text">СНТ Изабелла</span>
             </div>
-            <button id="installPwaBtn" class="hidden" onclick="installPWA()">📲 Установить</button>
+            <button id="installPwaBtn" class="hidden" onclick="installPWA()"> Установить</button>
             <div id="authButtons" class="auth-buttons">
                 <button class="btn btn-secondary" onclick="openModal('loginModal')">Войти</button>
                 <button class="btn btn-primary" onclick="openModal('registerModal')">Регистрация</button>
@@ -197,10 +203,11 @@
 
 <nav>
     <button class="nav-btn active" data-section="market">🛒 Куплю/Продам</button>
-    <button class="nav-btn" data-section="services">🔧 Услуги</button>
+    <button class="nav-btn" data-section="services"> Услуги</button>
     <button class="nav-btn" data-section="kind">💝 Добрые дела</button>
-    <button class="nav-btn" data-section="events"> События</button>
-    <button class="nav-btn" data-section="rides"> Еду в город</button>
+    <button class="nav-btn" data-section="events">🎉 События</button>
+    <button class="nav-btn" data-section="rides">🚗 Еду в город</button>
+    <button class="nav-btn" data-section="contact">💬 Написать админу</button>
 </nav>
 
 <main>
@@ -213,7 +220,7 @@
             <button class="filter-btn active" data-filter="all" onclick="setMarketFilter('all')">Все <span class="count" id="countAll">0</span></button>
             <button class="filter-btn" data-filter="buy" onclick="setMarketFilter('buy')">🛍️ Куплю <span class="count" id="countBuy">0</span></button>
             <button class="filter-btn" data-filter="sell" onclick="setMarketFilter('sell')">💰 Продам <span class="count" id="countSell">0</span></button>
-            <button class="filter-btn" data-filter="give" onclick="setMarketFilter('give')">🎁 Отдам <span class="count" id="countGive">0</span></button>
+            <button class="filter-btn" data-filter="give" onclick="setMarketFilter('give')"> Отдам <span class="count" id="countGive">0</span></button>
         </div>
         <div id="marketCards" class="cards-grid"></div>
     </section>
@@ -248,13 +255,38 @@
             <button class="btn btn-accent" onclick="openPostModal('ride')">+ Предложить место</button>
         </div>
         <div class="form-hint warning" style="margin-bottom: 15px;">
-             <strong>Важно:</strong> объявление автоматически удалится через 5 минут после указанного времени выезда.
+            ⏰ <strong>Важно:</strong> объявление автоматически удалится через 5 минут после указанного времени выезда.
         </div>
         <div id="ridesCards" class="cards-grid"></div>
     </section>
+
+    <section id="contact" class="section">
+        <div class="section-header">
+            <h2 class="section-title">💬 Написать администратору</h2>
+        </div>
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <div class="form-hint">📨 Ваше сообщение будет отправлено в Telegram администратору СНТ</div>
+            <form onsubmit="sendToAdmin(event)">
+                <div class="form-group">
+                    <label>Ваше имя <span class="required-mark">*</span></label>
+                    <input type="text" id="contactName" required placeholder="Как к вам обращаться">
+                </div>
+                <div class="form-group">
+                    <label>Телефон или участок</label>
+                    <input type="text" id="contactPhone" placeholder="+7... или номер участка">
+                </div>
+                <div class="form-group">
+                    <label>Сообщение <span class="required-mark">*</span></label>
+                    <textarea id="contactMessage" required rows="5" placeholder="Опишите ваш вопрос или предложение..."></textarea>
+                </div>
+                <div id="contactError" class="form-error"></div>
+                <button type="submit" class="btn btn-primary form-submit" id="contactSubmitBtn">Отправить сообщение</button>
+            </form>
+        </div>
+    </section>
 </main>
 
-<!-- Модалки (те же самые что и раньше) -->
+<!-- Модалки (те же что и раньше, только добавлено поле для фото) -->
 <div id="loginModal" class="modal-overlay">
     <div class="modal">
         <button class="modal-close" onclick="closeModal('loginModal')">×</button>
@@ -281,8 +313,8 @@
         <button class="modal-close" onclick="closeModal('registerModal')">×</button>
         <h2>Регистрация</h2>
         <div class="reg-method-switcher">
-            <button type="button" class="reg-method-btn active" data-method="phone" onclick="switchRegMethod('phone')">📱 Телефон</button>
-            <button type="button" class="reg-method-btn" data-method="plot" onclick="switchRegMethod('plot')">🏡 Участок</button>
+            <button type="button" class="reg-method-btn active" data-method="phone" onclick="switchRegMethod('phone')"> Телефон</button>
+            <button type="button" class="reg-method-btn" data-method="plot" onclick="switchRegMethod('plot')"> Участок</button>
         </div>
         <div id="hintPhone" class="form-hint">📱 Телефон для входа. Имя и участок — по желанию.</div>
         <div id="hintPlot" class="form-hint hidden">🏡 Участок и имя обязательны. Телефон — по желанию.</div>
@@ -331,6 +363,12 @@
                 <label>Описание</label>
                 <textarea id="postDescription" required></textarea>
             </div>
+            <div class="form-group">
+                <label>Фото (необязательно)</label>
+                <input type="file" id="postImage" accept="image/*" onchange="previewImage(this)">
+                <img id="imagePreview" class="image-preview">
+                <button type="button" class="remove-image hidden" onclick="removeImage()">Удалить фото</button>
+            </div>
             <div class="form-group" id="priceGroup">
                 <label>Цена (₽)</label>
                 <input type="number" id="postPrice" min="0" placeholder="0 — бесплатно">
@@ -365,7 +403,7 @@
 <div id="adminModal" class="modal-overlay">
     <div class="modal" style="max-width: 500px;">
         <button class="modal-close" onclick="closeModal('adminModal')">×</button>
-        <h2>️ Панель управления</h2>
+        <h2>⚙️ Панель управления</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
             <div style="background: #f4f7f3; padding: 10px; border-radius: 6px; text-align: center;">
                 <div style="font-size: 20px; font-weight: bold; color: #4a7c3a;" id="statUsers">0</div>
@@ -398,9 +436,37 @@
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="admin-row" style="margin-top: 10px;">
+                <div>
+                    <div class="admin-row-label"> Telegram бот</div>
+                    <div class="admin-row-desc">Настройки для связи с админом</div>
+                </div>
+                <button class="btn btn-small btn-primary" onclick="openTelegramSettings()">Настроить</button>
+            </div>
         </div>
         <h3 style="margin: 15px 0 10px; font-size: 14px;">Участники</h3>
         <div id="usersTableBody" style="max-height: 200px; overflow-y: auto;"></div>
+    </div>
+</div>
+
+<div id="telegramSettingsModal" class="modal-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('telegramSettingsModal')">×</button>
+        <h2>📱 Настройки Telegram</h2>
+        <div class="form-hint">Введите данные вашего Telegram бота для получения сообщений</div>
+        <form onsubmit="saveTelegramSettings(event)">
+            <div class="form-group">
+                <label>Token бота <span class="required-mark">*</span></label>
+                <input type="text" id="telegramToken" required placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz">
+                <div class="field-hint">Получите у @BotFather в Telegram</div>
+            </div>
+            <div class="form-group">
+                <label>Chat ID <span class="required-mark">*</span></label>
+                <input type="text" id="telegramChatId" required placeholder="123456789">
+                <div class="field-hint">Ваш ID или ID группы/канала</div>
+            </div>
+            <button type="submit" class="btn btn-primary form-submit">Сохранить</button>
+        </form>
     </div>
 </div>
 
@@ -410,6 +476,9 @@ import {
     getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
     onSnapshot, query, orderBy, getDocs, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { 
+    getStorage, ref, uploadBytes, getDownloadURL 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCDo7ILmQuKcybUFhRDwwAX8xxnwO8evDg",
@@ -425,17 +494,19 @@ const ADMIN_PASSWORD = 'admin';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const state = {
     currentUser: null,
     users: [],
     posts: [],
-    settings: { maintenanceMode: false, ridesEnabled: false },
+    settings: { maintenanceMode: false, ridesEnabled: false, telegramToken: '', telegramChatId: '' },
     currentPostType: 'market',
     editingPostId: null,
     marketFilter: 'all',
     regMethod: 'phone',
-    unsubscribers: []
+    unsubscribers: [],
+    selectedImage: null
 };
 
 const savedUser = localStorage.getItem('current_user');
@@ -445,7 +516,7 @@ const unsubSettings = onSnapshot(doc(db, 'settings', 'main'), (docSnap) => {
     if (docSnap.exists()) {
         state.settings = docSnap.data();
     } else {
-        setDoc(doc(db, 'settings', 'main'), { maintenanceMode: false, ridesEnabled: false });
+        setDoc(doc(db, 'settings', 'main'), { maintenanceMode: false, ridesEnabled: false, telegramToken: '', telegramChatId: '' });
     }
     checkMaintenanceMode();
     renderRidesSection();
@@ -689,6 +760,33 @@ function updateAuthUI() {
     }
 }
 
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const removeBtn = document.querySelector('.remove-image');
+    
+    if (input.files && input.files[0]) {
+        state.selectedImage = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.classList.add('show');
+            removeBtn.classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeImage() {
+    const input = document.getElementById('postImage');
+    const preview = document.getElementById('imagePreview');
+    const removeBtn = document.querySelector('.remove-image');
+    
+    input.value = '';
+    state.selectedImage = null;
+    preview.classList.remove('show');
+    removeBtn.classList.add('hidden');
+}
+
 function openPostModal(type) {
     if (!state.currentUser) {
         alert('Нужно войти');
@@ -697,6 +795,7 @@ function openPostModal(type) {
     }
     state.currentPostType = type;
     state.editingPostId = null;
+    state.selectedImage = null;
     const titles = { market: 'Объявление', service: 'Услуга', kind: 'Доброе дело', event: 'Событие', ride: 'Поездка в город' };
     document.getElementById('postModalTitle').textContent = titles[type];
     document.getElementById('postSubmitBtn').textContent = 'Опубликовать';
@@ -718,6 +817,7 @@ function openPostModal(type) {
     document.getElementById('postPrice').value = '';
     document.getElementById('postDate').value = '';
     document.getElementById('postSeats').value = '1';
+    removeImage();
     
     openModal('postModal');
 }
@@ -725,45 +825,138 @@ function openPostModal(type) {
 async function handlePost(e) {
     e.preventDefault();
     const type = state.currentPostType;
-    const postData = {
-        type,
-        title: document.getElementById('postTitle').value.trim(),
-        description: document.getElementById('postDescription').value.trim(),
-        contact: document.getElementById('postContact').value.trim(),
-        author: state.currentUser.name || state.currentUser.phone || state.currentUser.plot,
-        authorPhone: state.currentUser.phone || '',
-        plot: state.currentUser.plot || '',
-        createdAt: new Date().toISOString()
-    };
-    
-    if (type === 'market') postData.marketType = document.getElementById('postMarketType').value;
-    if (type === 'market' || type === 'service') postData.price = parseInt(document.getElementById('postPrice').value) || 0;
-    
-    if (type === 'ride') {
-        const preset = document.getElementById('rideTimePreset').value;
-        const now = new Date();
-        let departureTime;
-        if (preset === '30') departureTime = new Date(now.getTime() + 30 * 60000);
-        else if (preset === '60') departureTime = new Date(now.getTime() + 60 * 60000);
-        else departureTime = new Date(document.getElementById('rideCustomTime').value);
-        
-        postData.departureTimeStr = departureTime.toLocaleString('ru-RU', {day: 'numeric', month: 'numeric', hour: '2-digit', minute:'2-digit'});
-        postData.deleteAt = new Date(departureTime.getTime() + 5 * 60000).getTime();
-    }
-    
-    if (type === 'event') postData.date = document.getElementById('postDate').value.trim();
-    if (type === 'ride') postData.seats = parseInt(document.getElementById('postSeats').value) || 1;
+    const submitBtn = document.getElementById('postSubmitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Публикация...';
     
     try {
+        let imageUrl = '';
+        
+        // Загрузка фото если есть
+        if (state.selectedImage) {
+            const storageRef = ref(storage, `posts/${Date.now()}_${state.selectedImage.name}`);
+            await uploadBytes(storageRef, state.selectedImage);
+            imageUrl = await getDownloadURL(storageRef);
+        }
+        
+        const postData = {
+            type,
+            title: document.getElementById('postTitle').value.trim(),
+            description: document.getElementById('postDescription').value.trim(),
+            contact: document.getElementById('postContact').value.trim(),
+            author: state.currentUser.name || state.currentUser.phone || state.currentUser.plot,
+            authorPhone: state.currentUser.phone || '',
+            plot: state.currentUser.plot || '',
+            image: imageUrl,
+            createdAt: new Date().toISOString()
+        };
+        
+        if (type === 'market') postData.marketType = document.getElementById('postMarketType').value;
+        if (type === 'market' || type === 'service') postData.price = parseInt(document.getElementById('postPrice').value) || 0;
+        
+        if (type === 'ride') {
+            const preset = document.getElementById('rideTimePreset').value;
+            const now = new Date();
+            let departureTime;
+            if (preset === '30') departureTime = new Date(now.getTime() + 30 * 60000);
+            else if (preset === '60') departureTime = new Date(now.getTime() + 60 * 60000);
+            else departureTime = new Date(document.getElementById('rideCustomTime').value);
+            
+            postData.departureTimeStr = departureTime.toLocaleString('ru-RU', {day: 'numeric', month: 'numeric', hour: '2-digit', minute:'2-digit'});
+            postData.deleteAt = new Date(departureTime.getTime() + 5 * 60000).getTime();
+        }
+        
+        if (type === 'event') postData.date = document.getElementById('postDate').value.trim();
+        if (type === 'ride') postData.seats = parseInt(document.getElementById('postSeats').value) || 1;
+        
         if (state.editingPostId) {
             await updateDoc(doc(db, 'posts', state.editingPostId), postData);
         } else {
             await addDoc(collection(db, 'posts'), postData);
         }
+        
         closeModal('postModal');
         e.target.reset();
+        removeImage();
     } catch (e) {
         alert('Ошибка сохранения: ' + e.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Опубликовать';
+    }
+}
+
+async function sendToAdmin(e) {
+    e.preventDefault();
+    const name = document.getElementById('contactName').value.trim();
+    const phone = document.getElementById('contactPhone').value.trim();
+    const message = document.getElementById('contactMessage').value.trim();
+    const errorDiv = document.getElementById('contactError');
+    const submitBtn = document.getElementById('contactSubmitBtn');
+    
+    if (!state.settings.telegramToken || !state.settings.telegramChatId) {
+        errorDiv.textContent = '⚠️ Telegram бот не настроен. Обратитесь к администратору.';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+    
+    try {
+        const text = `📨 *Новое сообщение от пользователя СНТ*\n\n` +
+                    ` *Имя:* ${name}\n` +
+                    `📱 *Телефон/Участок:* ${phone || 'Не указан'}\n` +
+                    `💬 *Сообщение:*\n${message}\n\n` +
+                    ` *Время:* ${new Date().toLocaleString('ru-RU')}`;
+        
+        const response = await fetch(`https://api.telegram.org/bot${state.settings.telegramToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: state.settings.telegramChatId,
+                text: text,
+                parse_mode: 'Markdown'
+            })
+        });
+        
+        if (response.ok) {
+            alert('✅ Сообщение успешно отправлено администратору!');
+            e.target.reset();
+        } else {
+            throw new Error('Ошибка отправки');
+        }
+    } catch (error) {
+        errorDiv.textContent = '❌ Ошибка отправки: ' + error.message;
+        errorDiv.style.display = 'block';
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Отправить сообщение';
+    }
+}
+
+function openTelegramSettings() {
+    if (!state.currentUser?.isAdmin) return;
+    document.getElementById('telegramToken').value = state.settings.telegramToken || '';
+    document.getElementById('telegramChatId').value = state.settings.telegramChatId || '';
+    openModal('telegramSettingsModal');
+}
+
+async function saveTelegramSettings(e) {
+    e.preventDefault();
+    const token = document.getElementById('telegramToken').value.trim();
+    const chatId = document.getElementById('telegramChatId').value.trim();
+    
+    try {
+        await setDoc(doc(db, 'settings', 'main'), {
+            ...state.settings,
+            telegramToken: token,
+            telegramChatId: chatId
+        }, { merge: true });
+        alert('✅ Настройки Telegram сохранены!');
+        closeModal('telegramSettingsModal');
+    } catch (error) {
+        alert(' Ошибка сохранения: ' + error.message);
     }
 }
 
@@ -827,7 +1020,7 @@ function renderRidesSection() {
             <div class="empty-state" style="padding: 40px 15px;">
                 <div class="empty-state-icon">🚧</div>
                 <h3 style="color: #2c3e2d; margin-bottom: 8px;">Раздел в разработке</h3>
-                <p style="color: #666;">Простите, данный раздел пока в разработке.<br>Администрация сайта работает над его запуском.</p>
+                <p style="color: #666;">Простите, данный раздел пока в разработке.<br>Администрация СНТ работает над его запуском.</p>
             </div>`;
     } else {
         if (navBtn) navBtn.innerHTML = '🚗 Еду в город';
@@ -863,10 +1056,11 @@ function renderCard(p) {
     const isOwner = state.currentUser && (state.currentUser.isAdmin || p.authorPhone === state.currentUser.phone);
     const actions = isOwner ? `
         <div class="card-actions">
-            <button class="btn btn-primary btn-small" onclick="editPost('${p.id}')">️</button>
+            <button class="btn btn-primary btn-small" onclick="editPost('${p.id}')">✏️</button>
             <button class="btn btn-danger btn-small" onclick="deletePost('${p.id}')">🗑️</button>
         </div>` : '';
     const timeInfo = p.type === 'ride' && p.departureTimeStr ? `<div class="card-time">🚗 Выезд: ${p.departureTimeStr}</div>` : '';
+    const imageHtml = p.image ? `<img src="${p.image}" class="card-image small" onclick="window.open('${p.image}', '_blank')">` : '';
     
     return `
         <div class="card">
@@ -874,10 +1068,11 @@ function renderCard(p) {
                 <div class="card-title">${escapeHtml(p.title)}</div>
                 <span class="card-type ${typeClass}">${typeLabel}</span>
             </div>
+            ${imageHtml}
             <div class="card-body">${escapeHtml(p.description)}</div>
             ${timeInfo}
             <div class="card-footer">
-                <span class="card-author"> ${escapeHtml(authorLine)}</span>
+                <span class="card-author">👤 ${escapeHtml(authorLine)}</span>
                 ${priceBlock}
             </div>
             <div style="margin-top:8px;font-size:12px;">📞 ${escapeHtml(p.contact)}</div>
@@ -895,6 +1090,7 @@ function editPost(id) {
     if (!post) return;
     state.editingPostId = id;
     state.currentPostType = post.type;
+    state.selectedImage = null;
     document.getElementById('postModalTitle').textContent = 'Редактировать';
     document.getElementById('postSubmitBtn').textContent = 'Сохранить';
     document.getElementById('marketTypeGroup').classList.toggle('hidden', post.type !== 'market');
@@ -977,6 +1173,11 @@ window.deleteUser = deleteUser;
 window.toggleCustomRideTime = toggleCustomRideTime;
 window.toggleRidesSection = toggleRidesSection;
 window.toggleMaintenanceMode = toggleMaintenanceMode;
+window.openTelegramSettings = openTelegramSettings;
+window.saveTelegramSettings = saveTelegramSettings;
+window.sendToAdmin = sendToAdmin;
+window.previewImage = previewImage;
+window.removeImage = removeImage;
 
 let deferredPrompt;
 const installBtn = document.getElementById('installPwaBtn');
@@ -1013,3 +1214,4 @@ checkMaintenanceMode();
 
 </body>
 </html>
+
